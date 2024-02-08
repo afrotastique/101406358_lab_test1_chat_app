@@ -1,0 +1,19 @@
+{
+  "name": "labs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Julien",
+  "license": "ISC",
+  "description": "lab week 03",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.1.1",
+    "socket.io": "^4.7.4"
+  }
+}

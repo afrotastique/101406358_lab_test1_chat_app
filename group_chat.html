@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket Programming</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+<h1>Chat App</h1>
+<script>
+
+    var ioClient = io();//connect to the server
+    var socketID = ''
+    ioClient.on('connect', function(){
+        socketID = ioClient.id;
+        document.getElementById('socketID').innerHTML = socketID;
+        console.log('connected');
+        //socket.emit('welcome', {data: 'welcome'});
+        ioClient.emit('say_hello', "How are you all?");
+    });
+    ioClient.on('welcome', function(data){
+        console.log(data);
+    });
+    ioClient.on('chat_message', function(data){
+        console.log(`Chat: ${data}`);
+        const container = document.getElementById('container');
+        container.innerHTML += `<p>${data}</p>`;
+    });
+    ioClient.on('disconnect', function(){
+        console.log('disconnected');
+    });
+    function sendMessage() {
+        const txtmessage = document.getElementById('message');
+        ioClient.emit('chat_message', txtmessage.value);
+
+    }
+    function sentGroupMessage() {
+        const data = {
+            group: document.querySelector('input[name="group"]:checked').value,
+            message: document.getElementById('message').value
+        }
+
+        ioClient.emit('group_message', data);
+    }
+
+    function joinGroup() {
+        const group = document.querySelector('input[name="group"]:checked').value;
+        ioClient.emit('join_group', group);
+    }
+
+    function leave_group() {
+        const group = document.querySelector('input[name="group"]:checked').value;
+        ioClient.emit('leave_group', group);
+    }
+
+    ioClient.on("group_message_client" ,(gmsg) => {
+        console.log(gmsg);
+        const container = document.getElementById('container');
+        container.innerHTML += `<p>${ioClient.id} - ${gmsg}</p>`;
+    });
+</script>
+
+<h2>Group Chat</h2>
+<h4 id="socketID"></h4>
+<input type="radio" id="group1" name="group" value="news">News <br/>
+<input type="radio" id="group2" name="group" value="sports">Sports <br/>
+<input type="radio" id="group3" name="group" value="entertainment">Entertainment <br/>
+<button onclick="joinGroup()">Join Group</button>
+<input type="text" id="message" name="message" placeholder="Enter your message"/>
+<!-- <button onclick="sendMessage()">Sent Message</button>  -->
+<button onclick="sentGroupMessage()">Sent Message</button>
+<h3>Chat History</h3>
+<div id="container" name="container">
+
+</div>
+<button onclick="leave_group()">Leave Group</button>
+</body>
+</html>
